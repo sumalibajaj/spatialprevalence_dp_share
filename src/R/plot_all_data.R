@@ -219,7 +219,7 @@ m1 <- tm_shape(map_and_data) +
                                   text.size = 0.9,     # increase legend numbers size
                                   frame = FALSE)
   ) +
-  tm_layout(legend.outside = TRUE, frame = FALSE)
+  tm_layout(legend.outside = TRUE, frame = FALSE, meta.margins=c(0, 0, 0, 0.25))
 m1 <- tmap_grob(m1)
 
 # Age proportion map
@@ -251,7 +251,7 @@ m2 <- tm_shape(map_and_data_temp) +
                             text.size = 0.9,     # increase legend numbers size
                             frame = FALSE) 
   ) +
-  tm_layout(legend.outside = TRUE, frame = FALSE) +
+  tm_layout(legend.outside = TRUE, frame = FALSE, meta.margins=c(0, 0, 0, 0.25)) +
   tmap_options(component.autoscale = FALSE)
 # m2
 m2 <- tmap_grob(m2)
@@ -274,14 +274,16 @@ m3 <- tm_shape(map_and_data_temp1) +
     fill.scale = tm_scale_continuous(
       values = "-RdYlGn",      # reversed palette
       value.na = "transparent",# NA areas invisible
-      label.na = NA            # removes "Missing" from legend
+      label.na = NA,            # removes "Missing" from legend
+      limits = c(0, max(map_and_data_temp1[["pop_density"]]))
     ),
     fill.legend = tm_legend(title = "Population density",
                             title.size = 1.1,   # increase legend title size
                             text.size = 0.9,     # increase legend numbers size
-                            frame = FALSE) 
+                            frame = FALSE,
+                            position = tm_pos_out("right", "center")) 
   ) +
-  tm_layout(legend.outside = TRUE, frame = FALSE)
+  tm_layout(legend.outside = TRUE, frame = FALSE, meta.margins=c(0, 0, 0, 0.25))
 
 # m3
 m3 <- tmap_grob(m3)
@@ -300,9 +302,3 @@ p <- plot_grid(p_temp1, p_temp2,
 p
 ggsave(p, file = "outputs/data_AC.png", width = 15, height = 12)
 ggsave(p, file = "outputs/data_AC.pdf", width = 15, height = 12)
-
-
-
-
-  
-  

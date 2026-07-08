@@ -19,7 +19,7 @@ my_color <- c("1" = "#94d2bd",
 ################################################################################
 # Number of clusters each month
 n_clusters <- read.csv("data/processed/n_clusters.csv")
-mmyy_df <- read.csv("data/processed/mmyy_df.csv") %>% filter(!(mmyy %in% c("3-2022")))
+mmyy_df <- read.csv("data/processed/mmyy_df.csv")# %>% filter(!(mmyy %in% c("3-2022")))
 
 # final list with all months and chains
 results_list <- vector(mode='list', nrow(mmyy_df))
@@ -48,7 +48,7 @@ results_df <- do.call("rbind", results_list)
 
 results_df <- results_df %>%
   group_by(month_year) %>%
-  mutate(n_clusters = max(final_clusters),
+  mutate(n_clusters = max(as.numeric(as.character(final_clusters))),
          final_clusters = as.factor(final_clusters)) %>%
 arrange(desc(n_ltla), .by_group = TRUE) %>%  
   mutate(order_in_month = as.factor(row_number()))
@@ -84,8 +84,8 @@ q1 <- ggplot(data = results_df %>% filter(month_year>="2020-10-01")) +
   scale_color_manual(values = my_color, aesthetics = c("color", "fill")) +
   scale_x_date(date_labels = "%b %y", breaks = date_breaks) +
   labs(x = "Date", y = "Number of LTLAs") +
-  geom_text(aes(x = month_year, y = n_clusters, label = n_clusters), 
-            vjust = -21,  # Vertical adjustment
+  geom_text(aes(x = month_year, label = n_clusters), 
+            y = max(results_df[["n_ltla"]]),
             hjust = 0.5,   # Horizontal adjustment
             size = 4,      # Text size
             color = "black") +
@@ -101,7 +101,8 @@ q1
 # Distance between co-clustered LTLAs
 ################################################################################
 mmyy_df <- read.csv("data/processed/mmyy_df.csv") %>%
-  filter(!(mmyy %in% c("8-2020", "9-2020", "3-2022")))
+  #filter(!(mmyy %in% c("8-2020", "9-2020", "3-2022")))
+  filter(!(mmyy %in% c("8-2020", "9-2020")))
 
 co_clustered_pairs_list <- vector(mode='list', nrow(mmyy_df))
 
@@ -212,7 +213,8 @@ summary_df1 <- results_df1 %>%
 
 # Now entropy with population size 
 mmyy_df <- read.csv("data/processed/mmyy_df.csv") %>%
-  filter(!(mmyy %in% c("8-2020", "9-2020", "3-2022")))
+  # filter(!(mmyy %in% c("8-2020", "9-2020", "3-2022")))
+  filter(!(mmyy %in% c("8-2020", "9-2020")))
 
 summary_df2 <- data.frame(matrix(ncol = 2, nrow = nrow(mmyy_df)))
 x <- c("mmyy", "entropy_pop")

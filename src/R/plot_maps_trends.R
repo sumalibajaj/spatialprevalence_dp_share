@@ -28,11 +28,11 @@ for(mmyy_temp in mmyy_df$mmyy){
 
 # Plot invasion maps and trends together and remaining together
 # Add labels to trend plots
-trends[[3]]  <- trends[[3]]  + ylab("Prevalence")
-trends[[10]] <- trends[[10]] + ylab("Prevalence")
-trends[[15]] <- trends[[15]] + 
-  ylab("Prevalence") +
-  xlab("Date")
+trends[[3]]  <- trends[[3]]  #+ ylab("Prevalence")
+trends[[10]] <- trends[[10]] #+ ylab("Prevalence")
+trends[[15]] <- trends[[15]] #+ 
+  # ylab("Prevalence") +
+  # xlab("Date")
 
 r1 <- plot_grid(maps[[3]], trends[[3]],
                     maps[[10]], trends[[10]], 

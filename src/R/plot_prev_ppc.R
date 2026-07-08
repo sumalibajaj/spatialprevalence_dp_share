@@ -96,3 +96,21 @@ ggsave(p6, file = "outputs/ppc/ppc_prev_overall_AC_6.pdf", width = 20, height = 
 
 
 
+
+
+p <- plot_grid(results[[1]], results[[2]], results[[3]], 
+               results[[4]], results[[5]], results[[6]], 
+               results[[7]], results[[8]], results[[9]], 
+               ncol = 3,
+               align = 'v')
+# p
+ggsave(p, file = "outputs/ppc/ppc_prev_overall_AC_p1.png", width = 20, height = 20)
+
+
+p <- plot_grid(results[[10]], results[[11]], results[[12]], 
+               results[[13]], results[[14]], results[[15]], 
+               results[[16]], results[[17]], results[[18]],
+               ncol = 3,
+               align = 'v')
+# p
+ggsave(p, file = "outputs/ppc/ppc_prev_overall_AC_p2.png", width = 20, height = 20)
