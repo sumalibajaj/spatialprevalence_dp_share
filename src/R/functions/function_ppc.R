@@ -1,7 +1,7 @@
 do_ppc <- function(weeks, mmyy, mu0, sigma0, sigma){
   dat_obs_path <- paste0("data/processed/final_clustertrend_assignment_", mmyy, ".rds")
   dat_obs <- readRDS(dat_obs_path) %>%
-    rename(final_clusters = results_final) %>%
+    # rename(final_clusters = results_final) %>%
     arrange(final_clusters) # all cluster assignments together
   
   # Calculate observed empirical cdf
@@ -165,7 +165,8 @@ do_ppc <- function(weeks, mmyy, mu0, sigma0, sigma){
     scale_color_brewer(palette = "Set2") +
     facet_wrap(~final_clusters, nrow = 6) +
     labs(x = "", y = "Prevalence") +
-    scale_x_date(date_labels = "%d %b %y") + 
+    scale_x_date(date_labels = "%d %b %y", breaks = unique(as.Date(dat_sim_plot$week_date))) + 
+    # scale_x_date(date_labels = "%d %b %y") + 
     theme(strip.background = element_rect(fill = "white", color = "grey"),
           strip.text = element_text(color = "black"))
   p_ppc_prev

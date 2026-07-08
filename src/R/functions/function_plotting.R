@@ -78,10 +78,18 @@ plot_and_save_last_iter <- function(data, data_location_fine, results_final, mmy
   a_temp <- ltla_cluster %>%
     rename(LAD22CD = location_fine)
   map_and_data_temp <- sp::merge(Eng_map, a_temp, by = "LAD22CD")
+  map_and_data_temp$final_clusters = factor(map_and_data_temp$final_clusters)
+  
+  levels_from_df = levels(map_and_data_temp$final_clusters)
+  
   a_temp_plot <- tm_shape(map_and_data_temp) +
     tm_fill("final_clusters", border.alpha = 0,
-            title = mmyy, style = "cat", palette = my_color) +
+            title = mmyy, style = "cat",
+            palette = my_color[1:length(unique(map_and_data_temp$final_clusters))],
+            fill.legend = tm_legend_hide(),
+            fill.scale = tm_scale_categorical(values=my_color[1:length(unique(map_and_data_temp$final_clusters))])) +
     tm_layout(legend.outside = TRUE, frame = FALSE)
+    tm_add_legend(type="fill", labels=levels_from_df, fill=my_color[1:length(unique(map_and_data_temp$final_clusters))], title="Cluster")
   a_temp_plot
 
   print(a_temp_plot)
