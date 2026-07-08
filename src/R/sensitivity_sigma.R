@@ -27,7 +27,7 @@ for(sigma_temp in sigmas){
 
   # Clustering
   create_clustertrends_sens_sigma(dat_og = dat_og, weeks = temp_weeks, n_more_chains = 2,
-                         alpha = 2, sigma_mult_factor = sigma_temp, maxIters = 2000)
+                         alpha = 2, sigma_mult_factor = sigma_temp, maxIters = 10000)
   
   
   # Plotting
