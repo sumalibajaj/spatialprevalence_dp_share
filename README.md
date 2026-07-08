@@ -56,7 +56,7 @@ source("src/R/create_select_processed_data.R")
 ```r
 source("src/R/run_clustertrends.R")
 ```
-This runs the Gibbs sampler with 4 chains × 2000 iterations per month, saves MCMC outputs to `data/processed/`, and saves cluster map and trend plots to `outputs/`.
+This runs the Gibbs sampler with 4 chains × 10000 iterations per month, saves MCMC outputs to `data/processed/`, and saves cluster map and trend plots to `outputs/`.
 
 ### 3. Posterior predictive checks
 ```r
