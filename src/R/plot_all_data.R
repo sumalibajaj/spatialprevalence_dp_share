@@ -21,18 +21,18 @@ coef = 100
 p1 <- ggplot() +
   geom_line(data = dat_og %>% 
               filter(week_date>= "2020-10-01",
-                     week_date<= "2022-03-1"),
+                     week_date<= "2022-03-31"),
             aes(x = as.Date(week_date), y = mean_prev, group = location_fine), 
             color = "grey", alpha = 0.3)+
   geom_line(data = prev %>% 
               filter(Date_og>= "2020-10-01",
-                     Date_og<= "2022-03-7"),
+                     Date_og<= "2022-03-31"),
             aes(x = Date_og, y = mean_prev), color = "#0d3b66")+
   geom_ribbon(data = prev %>% 
                 filter(Date_og>= "2020-10-01",
-                       Date_og<= "2022-03-7"),
+                       Date_og<= "2022-03-31"),
               aes(x = Date_og, ymin = lower, ymax = upper), fill = "#0d3b66", alpha = 0.6) +
-  scale_x_date(date_labels = "%b %y", breaks = date_breaks) +
+  scale_x_date(date_labels = "%d %b %y", breaks = date_breaks) +
   labs(x = "Date", y = "Prevalence") +
   theme_bw() +
   theme(legend.title = element_blank(),
@@ -59,7 +59,7 @@ p2 <- mob %>%
   geom_vline(xintercept = as.Date("2021-03-08"), linetype="dashed") +  
   geom_vline(xintercept = as.Date("2021-12-8")) +
   geom_line(aes(color = type)) +
-  scale_x_date(date_labels = "%b %y", breaks = date_breaks) +
+  scale_x_date(date_labels = "%d %b %y", breaks = date_breaks) +
   # scale_x_date(date_labels = "%b %y", date_breaks = "2 months", limits = c(as.Date("2020-10-01"), NA)) +
   labs(x = "Date", y = "Number of trips in a week") +
   theme_bw() +
