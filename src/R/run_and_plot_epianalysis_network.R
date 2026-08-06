@@ -57,8 +57,8 @@ results_df <- do.call("rbind", results_list) %>%
   na.omit()
 
 # Divide log prop diff by 10, so that the coefficient corresponds to a ten percent increase
-results_df <- results_df %>%
-  mutate(estimate = ifelse(covariate == "prop_diff", estimate/10, estimate))
+# results_df <- results_df %>%
+  # mutate(estimate = ifelse(covariate == "prop_diff", estimate/10, estimate))
 
 # Save the number of clusters each month
 n_clusters_df <- do.call("rbind", n_clusters_list) %>%
@@ -80,7 +80,7 @@ per capita)",
                                           "Average mobility per capita between the LTLAs (monthly trips per capita)",
                                           "Absolute difference in IMD levels (scaled by 10)",
                                           "Absolute difference in population density (1000 people per square kilometer)",
-                                          "Logged absolute difference in the proportion of people over 64 years (10% change)",
+                                          "Absolute difference in the proportion of people over 64 years",
                                           "Distance between the centroids of the LTLAs (100 km)",
                                           "Shared boundary indicator (1:Yes)"),
                                levels = c("(Intercept)",
@@ -167,3 +167,9 @@ p
 ggsave(p, file = "outputs/epi/epi_facet_logpropdiff.png", width = 13, height = 10)
 ggsave(p, file = "outputs/epi/epi_facet_logpropdiff.pdf", width = 13, height = 10)
 
+
+df = pivot_wider(results_df, id_cols = covariate, names_from = month_year, values_from = pvalue)
+df = df[-1,]
+df$covariate = c("1", "2", "3", "4", "5", "6", "7")
+
+print(xtable(df, digits=3), include.rownames = FALSE)

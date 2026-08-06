@@ -107,3 +107,27 @@ for(temp_monthyear in unique(weeks_monthyear$monthyear)){
   }
   
 }
+
+
+
+
+#### Rerun ppc
+
+for(temp_monthyear in unique(weeks_monthyear$monthyear)){
+  # for(temp_monthyear in c("2021-10")){
+  print(paste0("Month: ", temp_monthyear))
+  temp_weeks <- weeks_monthyear %>% 
+    filter(monthyear == temp_monthyear) %>%
+    select(weeks) %>%
+    pull() %>%
+    as.Date()
+  
+  # Clustering
+  if(length(temp_weeks) <= 1){
+    print("only one week in this month, so moving on to next month")
+  } else{
+    rerun_ppc(dat_og = dat_og, weeks = temp_weeks, n_more_chains = 3,
+                         alpha = 2, sigma_mult_factor = 1/100000, maxIters = 10000) 
+
+  }
+}

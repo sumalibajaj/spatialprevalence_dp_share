@@ -40,6 +40,11 @@ for(i in seq_along(mmyy_df$mmyy)){
   results[[i]] = chains_clusters_df
 }
 
+
+date_labeller <- function(value) {
+  return(format(as.Date(value), "%b %Y"))
+}
+
 results_df <- do.call("rbind", results) %>%
   mutate(month_year = as.Date(paste("01", mmyy, sep = "-"), format = "%d-%m-%Y"),
          chain_number = as.factor(chain_number)) %>%
@@ -54,7 +59,7 @@ p <- ggplot(data = results_df %>% filter(n_clusters < 30) %>%
             aes(x = iter, y = n_clusters, group = chain_number)) +
   geom_line(aes(color = chain_number)) +
   scale_y_continuous(trans = 'log10') +
-  facet_wrap(~month_year, scales = "free", ncol = 4) +
+  facet_wrap(~month_year, scales = "free", ncol = 4, labeller = as_labeller(date_labeller)) +
   theme_bw() +  
   labs(x = "Iteration", y = "Number of clusters", color = "Chains") +
   theme(legend.position = "bottom",
@@ -64,7 +69,8 @@ p <- ggplot(data = results_df %>% filter(n_clusters < 30) %>%
         axis.text.y = element_text(size = 13),
         legend.text = element_text(size = 14),
         strip.text.x = element_text(size = 13),
-        strip.background = element_rect(fill="#f5ebe0")) +
+        strip.background = element_rect(fill="#f5ebe0"),
+        plot.margin = margin(r=25)) +
   scale_color_manual(values = c("1" = "#274c77",
                                "2" = "#6096ba",
                                "3" = "#a3cef1",

@@ -50,7 +50,7 @@ i=1
 for(mmyy_temp in mmyy_df$mmyy){
   print(mmyy_temp)
   results[[i]] = readRDS(paste0("outputs/ppc/rdata/ppc_prev_", mmyy_temp, ".rds")) +
-    labs(y = "") +
+    labs(y = "Prevalence", x = "Week") +
     scale_y_continuous(breaks = scales::pretty_breaks(n = 2)) + 
     theme(axis.title.x = element_text(size = 12),       # X axis title size
           axis.title.y = element_text(size = 12),       # Y axis title size

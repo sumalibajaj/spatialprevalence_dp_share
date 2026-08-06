@@ -1,18 +1,7 @@
-library(dplyr)
-library(tidyr)
-library(readxl)
-library(stringr)
-library(ggplot2)
-library(tidyverse)
-source("src/R/functions/function_create_pop_ltla_agegroups.R")
-source("src/R/functions/function_create_pop_density_ltla.R")
-source("src/R/functions/function_create_imd_ltla.R")
-source("src/R/functions/function_utility.R")
 
-library(sna)
+mmyys = c("10-2020", "11-2020", "12-2020", "1-2021", "12-2021", "1-2022", "2-2022")
 
-
-do_epianalysis_network = function(mmyy, maxIters){
+for (mmyy in mmyys) {
   
   mmyy_input <- mmyy
   
@@ -114,7 +103,7 @@ do_epianalysis_network = function(mmyy, maxIters){
       rename(mob_per_pop_within2 = mob_per_pop) %>% 
       replace_na(list(mob_per_pop_within2 = 0))
     
-  
+    
     # mobility between LTLA 1 and 2
     dat <- left_join(dat, mob_between, by = c("pair_lad" = "pair_lad")) %>%
       rename(mob_per_pop_between = mob_per_pop) %>% 
@@ -164,55 +153,35 @@ do_epianalysis_network = function(mmyy, maxIters){
     dat <- dat %>%
       mutate(imd_per10_diff = abs(imd_per10_1 - imd_per10_2),
              pop_density_per1000_diff = abs(pop_density_per1000_1 - pop_density_per1000_2),
-             # prop_diff = log(abs(prop1 - prop2)),
              prop_diff = abs(prop1 - prop2),
              mob_per_pop_within_diff = abs(mob_per_pop_within1 - mob_per_pop_within2))
   }
   
-  convert_to_matrix = function(df) {
-    all_ltlas = sort(unique(c(df[["location_fine1"]], df[["location_fine2"]])))
-    n = length(all_ltlas)
-    
-    y = matrix(NA, n, n, dimnames=list(all_ltlas, all_ltlas))
-    
-    for (i in 1:nrow(df)) {
-      ltla1 = df[i, "location_fine1"]
-      ltla2 = df[i, "location_fine2"]
-      y[[ltla1, ltla2]] = df[i, "prob"]
-      y[[ltla2, ltla1]] = df[i, "prob"]
-      
-    }
-    diag(y) = 1.0
-    
-    covariates = c("mob_per_pop_within_diff", "mob_per_pop_between", "imd_per10_diff", "pop_density_per1000_diff", "prop_diff", "distance_km_per100", "is_neighbour")
-    x = array(NA, dim = c(length(covariates), n, n), dimnames = list(covariates, all_ltlas, all_ltlas))
-    for (k in seq_along(covariates)) {
-      M = matrix(NA, n, n, dimnames=list(all_ltlas, all_ltlas))
-      for (i in 1:nrow(df)) {
-       ltla1 = df[i, "location_fine1"]
-       ltla2 = df[i, "location_fine2"]
-       M[[ltla1, ltla2]] = df[i, covariates[k]]
-       M[[ltla2, ltla1]] = df[i, covariates[k]]
+  
+  covariates = c("mob_per_pop_within_diff", 
+    "mob_per_pop_between",
+    "imd_per10_diff",
+    "pop_density_per1000_diff",
+    "prop_diff",
+    "distance_km_per100")
+  
+  results = matrix(NA, nrow = length(covariates), ncol = length(covariates))
+  for (i in seq_along(covariates)) {
+    for (j in seq_along(covariates)) {
+      if (j < i) {
+        s = cor.test(dat[[covariates[i]]], dat[[covariates[j]]], method = "spearman", exact = FALSE)
+        results[i, j] = s$estimate
       }
-      diag(M) = 0.0
-      x[k, , ] = M
     }
-    list(y = y, x = x)
   }
   
-  yx = convert_to_matrix(dat)
+  covariate_names = c("1", "2", "3", "4", "5", "6")
+  results = as.data.frame(results, row.names = covariate_names)
+  results = results[-1, ]
+  results = results[, -6]
+  colnames(results) = covariate_names[1:5]
   
-  nl = netlm(yx$y, yx$x, intercept=TRUE, mode="graph", nullhyp="qap", diag=FALSE, reps=1000, test.statistic="t-value")
+  print(xtable(results, digits = 5, caption = paste0("Spearman correlations between covariates for month: ", mmyy, ". Covariates are labelled as 1: Difference in mobilities within LTLAs; 2: Mobility between LTLAs; 3: Difference in IMD; 4: Difference in populaton density; 5: Difference in proportion over 64; 6: Distance between LTLAs (see section \\ref{section:regression_details})."), label = paste0("table_correlations_", mmyy)))
 
-  variables = c("(Intercept)", "mob_per_pop_within_diff", "mob_per_pop_between", "imd_per10_diff", "pop_density_per1000_diff", "prop_diff", "distance_km_per100", "is_neighbourTRUE")
-
-  output_nl = summary(nl)$coef %>% 
-    cbind(pvalue = nl$pgreqabs) %>% 
-    cbind(month_year = mmyy_input) %>% 
-    cbind(covariate = variables) %>%
-    as.data.frame()
-  colnames(output_nl) <- c("estimate", "pvalue", "month_year", "covariate")
-  
-  return(output_nl)
 }
 

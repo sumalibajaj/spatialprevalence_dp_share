@@ -6,7 +6,9 @@ library(sf)
 library(scales) # for log y scale
 
 # Define the breaks manually starting from October 2020
-date_breaks <- seq(as.Date("2020-10-01"), as.Date("2022-03-30"), by = "2 months")
+date_breaks <- seq(as.Date("2020-10-01"), as.Date("2022-04-30"), by = "2 months")
+
+bounds = range(date_breaks)
 
 # National ONS prevalence data
 prev <- readRDS("data/processed/ons_prev_england.rds")
@@ -24,14 +26,14 @@ p1 <- ggplot() +
                      week_date<= "2022-03-31"),
             aes(x = as.Date(week_date), y = mean_prev, group = location_fine), 
             color = "grey", alpha = 0.3)+
-  geom_line(data = prev %>% 
-              filter(Date_og>= "2020-10-01",
-                     Date_og<= "2022-03-31"),
-            aes(x = Date_og, y = mean_prev), color = "#0d3b66")+
-  geom_ribbon(data = prev %>% 
-                filter(Date_og>= "2020-10-01",
-                       Date_og<= "2022-03-31"),
-              aes(x = Date_og, ymin = lower, ymax = upper), fill = "#0d3b66", alpha = 0.6) +
+  # geom_line(data = prev %>% 
+  #             filter(Date_og>= "2020-10-03",
+  #                    Date_og<= "2022-03-26"),
+  #           aes(x = Date_og, y = mean_prev), color = "#0d3b66")+
+  # geom_ribbon(data = prev %>% 
+  #               filter(Date_og>= "2020-10-03",
+  #                      Date_og<= "2022-03-26"),
+  #             aes(x = Date_og, ymin = lower, ymax = upper), fill = "#0d3b66", alpha = 0.6) +
   scale_x_date(date_labels = "%d %b %y", breaks = date_breaks) +
   labs(x = "Date", y = "Prevalence") +
   theme_bw() +
@@ -40,7 +42,8 @@ p1 <- ggplot() +
         axis.title.x = element_text(size = 16),       # X axis title size
         axis.title.y = element_text(size = 16),       # Y axis title size
         axis.text.x = element_text(size = 14),        # X axis text size
-        axis.text.y = element_text(size = 14))
+        axis.text.y = element_text(size = 14)) +
+  coord_cartesian(xlim = bounds)
 p1
 
 
@@ -60,6 +63,7 @@ p2 <- mob %>%
   geom_vline(xintercept = as.Date("2021-12-8")) +
   geom_line(aes(color = type)) +
   scale_x_date(date_labels = "%d %b %y", breaks = date_breaks) +
+  scale_y_continuous(labels = label_number()) + 
   # scale_x_date(date_labels = "%b %y", date_breaks = "2 months", limits = c(as.Date("2020-10-01"), NA)) +
   labs(x = "Date", y = "Number of trips in a week") +
   theme_bw() +
@@ -72,16 +76,17 @@ p2 <- mob %>%
   scale_color_manual(values = c("within" = "#606c38", 
                                 "between" = "#bb8588"),
                      labels = c("within" = "Within LTLA", 
-                                "between" = "Between LTLAs"))
+                                "between" = "Between LTLAs")) +
+  coord_cartesian(xlim = bounds)
 
 p2
 
 
 # Monthly mobility per capita, all data
 mob_between <- readRDS("data/processed/covariates/ltla_monthly_mobility_processed_between.rds") %>%
-  mutate(month_year = as.Date(paste("01", mmyy, sep = "-"), format = "%d-%m-%Y"))
+  mutate(month_year = as.Date(paste("01", mmyy, sep = "-"), format = "%d-%m-%Y")) %>% filter(mmyy != "9-2020")
 mob_within <- readRDS("data/processed/covariates/ltla_monthly_mobility_processed_within.rds") %>%
-  mutate(month_year = as.Date(paste("01", mmyy, sep = "-"), format = "%d-%m-%Y"))
+  mutate(month_year = as.Date(paste("01", mmyy, sep = "-"), format = "%d-%m-%Y")) %>% filter(mmyy != "9-2020")
 
 p <- ggplot() +
   geom_jitter(data = mob_between, aes(x = month_year, y = mob_per_pop, 

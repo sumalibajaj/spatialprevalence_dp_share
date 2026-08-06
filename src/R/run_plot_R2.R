@@ -143,7 +143,8 @@ do_epianalysis_R2 <- function(mmyy, maxIters){
     dat <- dat %>%
       mutate(imd_per10_diff = abs(imd_per10_1 - imd_per10_2),
              pop_density_per1000_diff = abs(pop_density_per1000_1 - pop_density_per1000_2),
-             prop_diff = log(abs(prop1 - prop2)),
+             # prop_diff = log(abs(prop1 - prop2)),
+             prop_diff = abs(prop1 - prop2),
              mob_per_pop_within_diff = abs(mob_per_pop_within1 - mob_per_pop_within2))
     
     # Linear
@@ -196,8 +197,9 @@ results_df <- do.call("rbind", results_list) %>%
 
 
 date_breaks <- c(as.Date("2020-10-01"), as.Date("2020-11-01"), as.Date("2020-12-01"),
-                 as.Date("2021-01-01"), as.Date("2021-10-01"), as.Date("2021-12-01"),
+                 as.Date("2021-01-01"), as.Date("2021-12-01"),
                  as.Date("2022-01-01"), as.Date("2022-02-01"))
+
 # Convert month_year to a factor with levels corresponding to your breaks
 results_df$month_year <- factor(results_df$month_year, levels = date_breaks)
 

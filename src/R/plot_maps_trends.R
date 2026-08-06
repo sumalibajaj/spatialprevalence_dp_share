@@ -6,7 +6,7 @@ library(tmap)
 library(svglite)
 
 mmyy_df <- read.csv("data/processed/mmyy_df.csv") %>%
-  filter(!(mmyy %in% c("8-2020", "9-2020", "3-2022")))
+  filter(!(mmyy %in% c("8-2020", "9-2020")))
 
 # final lists with all plots
 maps <- vector(mode='list', nrow(mmyy_df))
@@ -45,27 +45,28 @@ ggsave(r1, file = "outputs/maps_trends_vocs.svg", width = 18, height = 15)
 
 r_m1 <- plot_grid(maps[[1]], maps[[3]], maps[[5]], maps[[7]], maps[[9]],
                 ncol = 1)
-r_m2 <- plot_grid(maps[[2]], maps[[4]], maps[[6]], maps[[8]],
+r_m2 <- plot_grid(maps[[2]], maps[[4]], maps[[6]], maps[[8]], maps[[10]],
                   ncol = 1)
-r_m3 <- plot_grid(maps[[10]], maps[[12]], maps[[14]], maps[[16]],
+r_m3 <- plot_grid(maps[[11]], maps[[13]], maps[[15]], maps[[17]],
                   ncol = 1)
-r_m4 <- plot_grid(maps[[11]], maps[[13]], maps[[15]],
+r_m4 <- plot_grid(maps[[12]], maps[[14]], maps[[16]], maps[[18]],
                   ncol = 1)
+
 r_t1 <- plot_grid(trends[[1]], trends[[3]], trends[[5]], trends[[7]], trends[[9]],
                   ncol = 1)
-r_t2 <- plot_grid(trends[[2]], trends[[4]], trends[[6]], trends[[8]],
+r_t2 <- plot_grid(trends[[2]], trends[[4]], trends[[6]], trends[[8]], trends[[10]],
                   ncol = 1)
-r_t3 <- plot_grid(trends[[10]], trends[[12]], trends[[14]], trends[[16]],
+r_t3 <- plot_grid(trends[[11]], trends[[13]], trends[[15]], trends[[17]],
                   ncol = 1)
-r_t4 <- plot_grid(trends[[11]], trends[[13]], trends[[15]],
+r_t4 <- plot_grid(trends[[12]], trends[[14]], trends[[16]], trends[[18]],
                   ncol = 1)
 
 ggsave(r_m1, file = "outputs/maps_1.pdf", width = 5, height = 15)
-ggsave(r_m2, file = "outputs/maps_2.pdf", width = 5, height = 12)
-ggsave(r_m3, file = "outputs/maps_3.pdf", width = 5, height = 15)
+ggsave(r_m2, file = "outputs/maps_2.pdf", width = 5, height = 15)
+ggsave(r_m3, file = "outputs/maps_3.pdf", width = 5, height = 12)
 ggsave(r_m4, file = "outputs/maps_4.pdf", width = 5, height = 12)
-ggsave(r_t1, file = "outputs/trends_1.pdf", width = 8, height = 15)
-ggsave(r_t2, file = "outputs/trends_2.pdf", width = 8, height = 12)
-ggsave(r_t3, file = "outputs/trends_3.pdf", width = 8, height = 15)
-ggsave(r_t4, file = "outputs/trends_4.pdf", width = 8, height = 12)
+ggsave(r_t1, file = "outputs/trends_1.pdf", width = 6.5, height = 15)
+ggsave(r_t2, file = "outputs/trends_2.pdf", width = 6.5, height = 15)
+ggsave(r_t3, file = "outputs/trends_3.pdf", width = 6.5, height = 12)
+ggsave(r_t4, file = "outputs/trends_4.pdf", width = 6.5, height = 12)
 

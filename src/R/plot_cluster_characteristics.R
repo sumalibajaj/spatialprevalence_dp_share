@@ -152,7 +152,7 @@ summary_co_clustered_pairs <- left_join(summary_co_clustered_pairs, results_df,
 
 # Custom labeller function to format dates in facet wrap
 date_labeller <- function(value) {
-  return(format(as.Date(value), "%d %b %y"))
+  return(format(as.Date(value), "%b %Y"))
 }
 
 p <- ggplot(data = co_clustered_pairs_df) +
