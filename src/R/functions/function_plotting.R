@@ -47,14 +47,15 @@ plot_and_save_last_iter <- function(data, data_location_fine, results_final, mmy
 
   p_cl_obs <- ggplot(data = results_plot, aes(x = as.Date(week_date), y = mean_prev, group = final_clusters)) +
     geom_jitter(aes(color = final_clusters), 
-                show.legend = FALSE, alpha = 0.7, size = 2, stroke = 0) +
+                show.legend = FALSE, alpha = 0.7, size = 2, stroke = 0, width = 2.0, height=0) +
     geom_line(data = results_plot_sum, aes(color = final_clusters), show.legend = FALSE) +
     theme_bw() +
     scale_y_continuous(limits = c(0, 0.07)) +
-    scale_x_date(date_labels = "%d %b %y") + 
+    scale_x_date(date_labels = "%d %b %y", breaks = unique(as.Date(results_plot$week_date))) + 
     # scale_color_brewer(palette = "Set2") +
     scale_color_manual(values = my_color, aesthetics = c("color", "fill")) +
-    labs(x = "", y = "")
+    labs(x = "Week", y = "Prevalence") +
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 
   print(p_cl_obs)
 
@@ -77,10 +78,18 @@ plot_and_save_last_iter <- function(data, data_location_fine, results_final, mmy
   a_temp <- ltla_cluster %>%
     rename(LAD22CD = location_fine)
   map_and_data_temp <- sp::merge(Eng_map, a_temp, by = "LAD22CD")
+  map_and_data_temp$final_clusters = factor(map_and_data_temp$final_clusters)
+  
+  levels_from_df = levels(map_and_data_temp$final_clusters)
+  
   a_temp_plot <- tm_shape(map_and_data_temp) +
     tm_fill("final_clusters", border.alpha = 0,
-            title = mmyy, style = "cat", palette = my_color) +
+            title = mmyy, style = "cat",
+            palette = my_color[1:length(unique(map_and_data_temp$final_clusters))],
+            fill.legend = tm_legend_hide(),
+            fill.scale = tm_scale_categorical(values=my_color[1:length(unique(map_and_data_temp$final_clusters))])) +
     tm_layout(legend.outside = TRUE, frame = FALSE)
+    tm_add_legend(type="fill", labels=levels_from_df, fill=my_color[1:length(unique(map_and_data_temp$final_clusters))], title="Cluster")
   a_temp_plot
 
   print(a_temp_plot)

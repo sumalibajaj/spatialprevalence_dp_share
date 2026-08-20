@@ -34,7 +34,7 @@ for(temp_monthyear in unique(weeks_monthyear$monthyear)){
     print("only one week in this month, so moving on to next month")
   else
     create_clustertrends(dat_og = dat_og, weeks = temp_weeks, n_more_chains = 3,
-                         alpha = 1, sigma_mult_factor = 1/100000, maxIters = 2000)
+                         alpha = 1, sigma_mult_factor = 1/100000, maxIters = 10000)
   
 }
 
@@ -52,7 +52,7 @@ for(temp_monthyear in unique(weeks_monthyear$monthyear)){
     print("only one week in this month, so moving on to next month")
   else
     create_clustertrends(dat_og = dat_og, weeks = temp_weeks, n_more_chains = 3,
-                         alpha = 5, sigma_mult_factor = 1/100000, maxIters = 2000)
+                         alpha = 5, sigma_mult_factor = 1/100000, maxIters = 10000)
   
 }
 
@@ -68,7 +68,7 @@ results_alpha2 <- vector(mode='list', nrow(mmyy_df))
 i=1
 for(mmyy_temp in mmyy_df$mmyy){
   print(mmyy_temp)
-  
+
   # read output file with number clusters for each iteration in a given month
   df_temp <- readRDS(paste0("data/processed/all_clustertrend_assignment_",
                  mmyy_temp, ".rds"))
@@ -141,6 +141,8 @@ results <- rbind(results, results_alpha1_df)
 results <- results %>%
   mutate(month_year = as.Date(paste("01", mmyy_temp, sep = "-"), format = "%d-%m-%Y"))
 
+results = results %>% filter(mmyy_temp != "10-2021")
+
 # How many clusters do we get at then end for different values of alpha
 results_lastiter <- results %>%
   mutate(max_iter = max(iter),
@@ -148,10 +150,16 @@ results_lastiter <- results %>%
   filter(iter == max_iter)
 
 date_breaks <- seq(as.Date("2020-10-01"), as.Date("2022-03-30"), by = "1 month")
-p <- ggplot(data = results_lastiter %>% filter(month_year >= "2020-10-01"), 
+date_breaks = date_breaks[-13]
+
+results_lastiter = results_lastiter %>% filter(month_year >= "2020-10-01")
+
+
+p <- ggplot(data = results_lastiter, 
             aes(x = month_year, y = n_clusters, fill = alpha)) +
   geom_bar(position="dodge", stat="identity", alpha = 0.9) +
   scale_x_date(date_labels = "%b %y", breaks = date_breaks) +
+  # scale_x_discrete(labels = format(date_breaks, "%b %y")) +
   scale_y_continuous(breaks = seq(0,14,2)) +
   theme_bw() +
   labs(x = "Date", y = "Number of clusters") +

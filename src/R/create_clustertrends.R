@@ -110,3 +110,35 @@ create_clustertrends <- function(dat_og, weeks, n_more_chains,
                           mmyy, "_alpha", alpha, ".rds"))
   }
 }
+
+
+
+rerun_ppc <- function(dat_og, weeks, n_more_chains, alpha, sigma_mult_factor, maxIters){
+  mmyy <- paste0(month(weeks[1]), "-", year(weeks[1]))
+  data <- dat_og %>% 
+    filter(week_date %in% weeks) %>% 
+    dplyr::select(location_fine, week_date, mean_prev)
+  
+  # Remove LTLAs with missing prevalence information for one or more weeks
+  data <- reshape(data, idvar = "location_fine", timevar = "week_date", direction = "wide") %>%
+    na.omit(is.na())
+  data_location_fine <- data[1]
+  # weekly prevalences for this month
+  data <- data[,-1] %>% as.matrix()
+  
+  # ----------------------------------------------------------------------------
+  # PARAMETERS AND INITIAL VALUES FOR DIRICHLET PROCESS GIBBS SAMPLER
+  # ----------------------------------------------------------------------------
+  # the base distribution here is Normal
+  # set the parameter values and initial values to be used in the DP Gibbs sampler
+  alpha <- alpha # concentration parameter >0 (smaller = few new clusters)
+  mu0 <- matrix(rep(0, length(weeks)), ncol = length(weeks), byrow = TRUE) # mean of base distribution
+  sigma0 <- diag(length(weeks)) * 1 # sd of base distribution
+  sigma <- diag(length(weeks)) * sigma_mult_factor # variance of likelihood
+  maxIters <- maxIters
+  
+  test_clusters <- alpha*log(1+(nrow(data)/alpha))
+  if (alpha == 2){
+    do_ppc(weeks = weeks, mmyy = mmyy, mu0 = mu0, sigma0 = sigma0, sigma = sigma)
+  }
+}
