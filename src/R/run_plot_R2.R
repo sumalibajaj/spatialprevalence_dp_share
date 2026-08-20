@@ -154,7 +154,9 @@ do_epianalysis_R2 <- function(mmyy, maxIters){
                pop_density_per1000_diff +
                prop_diff +
                distance_km_per100 +
-               is_neighbour, data = dat)  
+               is_neighbour, data = dat)
+    return(m2)
+  
     summary(m2)$adj.r.squared
     summary(m2)$r.squared
     
@@ -167,6 +169,8 @@ do_epianalysis_R2 <- function(mmyy, maxIters){
   }
 }
 
+m3 = do_epianalysis_R2(mmyy="10-2020", maxIters=10000)
+avPlots(m3, id=FALSE, col = adjustcolor("black", alpha.f = 0.025))
 
 # Code to select months for which we want to do epi analysis 
 weeks_monthyear <- tibble(weeks = unique(dat_og$week_date) ) %>%

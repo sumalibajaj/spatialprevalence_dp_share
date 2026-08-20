@@ -202,8 +202,9 @@ do_epianalysis_network = function(mmyy, maxIters){
   
   yx = convert_to_matrix(dat)
   
-  nl = netlm(yx$y, yx$x, intercept=TRUE, mode="graph", nullhyp="qap", diag=FALSE, reps=1000, test.statistic="t-value")
-
+  nl = netlm(yx$y, yx$x, intercept=TRUE, mode="graph", nullhyp="qap", diag=FALSE, reps=10, test.statistic="t-value")
+  return(list(nl=nl, y=yx$y, x=yx$x))
+  
   variables = c("(Intercept)", "mob_per_pop_within_diff", "mob_per_pop_between", "imd_per10_diff", "pop_density_per1000_diff", "prop_diff", "distance_km_per100", "is_neighbourTRUE")
 
   output_nl = summary(nl)$coef %>% 
@@ -215,4 +216,27 @@ do_epianalysis_network = function(mmyy, maxIters){
   
   return(output_nl)
 }
+
+nl = do_epianalysis_network("10-2020", 10000)
+
+y = nl$y
+x = nl$x
+nl = nl$nl
+
+
+fit_results = data.frame(predicted_values=nl$fitted.values, residuals=nl$residuals, y=nl$fitted.values + nl$residuals)
+
+ggplot(data = fit_results, aes(x = predicted_values, y = y)) + 
+  geom_point(alpha = 0.1, size = 1) 
+
+
+ggplot(data = fit_results, aes(x = predicted_values, y = residuals)) + 
+  geom_point(alpha = 0.1, size = 1) 
+
+
+
+
+
+r = y - y_predict
+y = r + y_predict
 

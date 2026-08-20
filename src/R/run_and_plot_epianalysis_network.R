@@ -78,7 +78,7 @@ results_df$covariate <- factor(results_df$covariate,
                                           "Absolute difference in monthly within-LTLA mobility per capita (monthly trips
 per capita)", 
                                           "Average mobility per capita between the LTLAs (monthly trips per capita)",
-                                          "Absolute difference in IMD levels (scaled by 10)",
+                                          "Absolute difference in index of multiple deprivation (IMD) levels (scaled by 10)",
                                           "Absolute difference in population density (1000 people per square kilometer)",
                                           "Absolute difference in the proportion of people over 64 years",
                                           "Distance between the centroids of the LTLAs (100 km)",
@@ -124,13 +124,13 @@ p <- ggplot() +
   scale_color_manual(values = c("Absolute difference in monthly within-LTLA mobility per capita (monthly trips
 per capita)" = "#028090", 
                                 "Average mobility per capita between the LTLAs (monthly trips per capita)" = "#0d3b66",
-                                "Absolute difference in IMD levels (scaled by 10)" = "#dc0073",
+                                "Absolute difference in index of multiple deprivation (IMD) levels (scaled by 10)" = "#dc0073",
                                 "Absolute difference in population density (1000 people per square kilometer)" = "black",
                                 "Difference between proportion of people older than 64 years (10% change)" = "#d1ac00",
                                 "Distance between the centroids of the LTLAs (100 km)" = "#d45113",
                                 "Shared boundary indicator (1:Yes)" = "#813405")) +
   guides(color = guide_legend(nrow = 4)) +
-  labs(x = "Date", y = "Estimated increase in probability of co-clustering of two LTLAs") +
+  labs(x = "Date", y = "Estimated increase in probability of co-clustering two LTLAs") +
   facet_wrap(~covariate, scales = "free", ncol = 2, labeller = label_wrap_gen(width = 60))
 p
 

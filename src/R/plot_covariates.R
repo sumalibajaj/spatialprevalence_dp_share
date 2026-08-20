@@ -10,7 +10,7 @@ ggplot(data = dat, aes(x = distance_km_per100, y = mob_per_pop_between)) +
 
 dat$log_prop_diff = log(dat$prop_diff)
 
-ggplot(data = dat, aes(x = log_prop_diff)) + 
+ggplot(data = dat, aes(x = imd_per10_2)) + 
   geom_histogram(alpha = 0.5)
 
 
